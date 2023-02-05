@@ -54,6 +54,8 @@ the new image with the encryption will be placed
 
 # Development Team
 
+Dev Team Name - Shadow Wizard Money Gang (we love casting spells)
+
 Jan Arvik - Team Lead / Website Lead
 
 Truman DeWelch- Command line/ PIP developer
