@@ -54,7 +54,7 @@ the new image with the encryption will be placed
 
 # Development Team
 
-Dev Team Name - Shadow Wizard Money Gang (we love casting spells)
+Dev Team Name - SWMG
 
 Jan Arvik - Team Lead / Website Lead
 
