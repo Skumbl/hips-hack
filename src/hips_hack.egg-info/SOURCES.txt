@@ -1,0 +1,12 @@
+LICENSE.rst
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+src/hips_hack/__init__.py
+src/hips_hack/stenography.py
+src/hips_hack.egg-info/PKG-INFO
+src/hips_hack.egg-info/SOURCES.txt
+src/hips_hack.egg-info/dependency_links.txt
+src/hips_hack.egg-info/requires.txt
+src/hips_hack.egg-info/top_level.txt
