@@ -1,11 +1,11 @@
 import unittest
 from hips_hack.stenography import encode, decode
+import os
 
 class TestEncodingDecoding(unittest.TestCase):
 
-    def test_multiply_by_three(self):
-        encode('stockimage.png','test','stockimage_encoded.png')
-        self.assertEqual(decode('stockimage_encoded.png'), 'test')
-		# self.assertEqual(multiply_by_three(3), 9)
+    def test_encoding_decoding(self):
+        encode('tests/stockimage.png','test','tests/stockimage_encoded.png')
+        self.assertEqual(decode('tests/stockimage_encoded.png'), 'test')
 
 unittest.main()
