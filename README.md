@@ -1,6 +1,4 @@
 ![banner](https://github.com/Skumbl/hips-hack/blob/main/Screenshot%202023-02-04%20at%2020-19-31%20Modern%20Minimal%20Technology%20Background%20Banner.png)
-# H.I.P.S-HACK
-## (HIDDEN IN PLAIN SIGHT)
 # H.I.P.S
 HIPS or Hidden In Plain Sight is a command line utility that takes in a string and the pathway to a image in order to hide it inside the image bit by bit hidden in random pixels
 It is also a web application linked bellow
