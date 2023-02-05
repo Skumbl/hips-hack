@@ -70,7 +70,7 @@ def encode(imagePath, dataToEncrypt, outputImagePath):
         rgb = rgb[:-1] + str(splitMergedData[i])
         imgDatFlat[indx] = int(rgb, 2)
 
-    
+
     curRGBIdx = 0
     imgDatFlat = imgDatFlat[::-1]
     for i,rgb in enumerate(imgDatFlat):
