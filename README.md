@@ -26,7 +26,7 @@ if any of the other methods have gone down for some reason then you can always c
 
 
 
-# how to use
+# How to Use
 
 ###  syntax 
 
@@ -47,7 +47,7 @@ to decrypt
     python3 -m hips_hack.stenograpghy -d <image path>
 
 the new image with the encryption will be placed 
-# how it works
+# How it Works
 
 *TODO WRITE THIS PART*
 
