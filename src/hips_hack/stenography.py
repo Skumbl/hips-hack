@@ -2,9 +2,20 @@ import cv2
 import numpy as np
 import os
 import re
+import sys
 
 
-def encode(imagePath, dataToEncrypt, outputImagePath):
+def encode(imagePath:str, dataToEncrypt:str, outputImagePath:str) -> None:
+    """Encodes data into an image
+    
+    Args:
+        imagePath (str): Path to image
+        dataToEncrypt (str): Data to encrypt
+        outputImagePath (str): Path to output image
+        
+        Returns:
+            None"""
+    
     findSlash = [m.start() for m in re.finditer('/', outputImagePath)]
     
     if len(findSlash) != 0:
@@ -20,12 +31,13 @@ def encode(imagePath, dataToEncrypt, outputImagePath):
         exit()
 
     imageData    = cv2.imread(imagePath)
-    numBytesPic  = int(np.floor(imageData.shape[0] * imageData.shape[1] * 3))
+    imgArea      = imageData.shape[0] * imageData.shape[1]
+    numBytesPic  = int(np.floor(imgArea * 3))
+    numLocations = int(np.ceil(np.log2(imgArea)))
+    imgDatFlat   = imageData.flatten()
 
-    numLocations = 10
-
-    splitData  = list(split(dataToEncrypt, numLocations))   # split data into 10 parts
-    temp = []
+    splitData  = list(_split(dataToEncrypt, numLocations))   # split data into 10 parts
+    temp       = []
     for d in splitData:
         temp.append(''.join(format(ord(i), '08b') for i in d))
     splitData = temp
@@ -37,24 +49,32 @@ def encode(imagePath, dataToEncrypt, outputImagePath):
     maxNumBits       = int(np.ceil(np.log2(numBytesPic)))
     numBytesReserved = numLocations * (8 + maxNumBits)
     numBytesUsable   = numBytesPic-numBytesReserved
-    indices = np.random.randint(0, numBytesUsable, numLocations) #[location1, location2];
-    indices = np.sort(indices)
-    for c in range(numLocations):
-        for i,idx in enumerate(indices):
-            if i == len(indices)-1:
-                break
-            if indices[i+1] - idx < maxDataLen:
-                indices[i] = idx - maxDataLen
-                if indices[i] < 0:
-                    indices[i] = 0
-                    indices[i+1] = maxDataLen
+
+    indices, indicesEnds = _getIndices(numBytesUsable, numLocations, maxDataLen, splitData)
+    print(np.max(indices), numBytesUsable, len(imgDatFlat))
+    try:
+        assert np.max(indices) < numBytesUsable
+    except:
+        indices, indicesEnds = _getIndices(numBytesUsable, numLocations, maxDataLen, splitData)
+        try:
+            assert np.max(indices) < numBytesUsable
+        except:
+            indices, indicesEnds = _getIndices(numBytesUsable, numLocations, maxDataLen, splitData)
+            try:
+                assert np.max(indices) < numBytesUsable
+            except:
+                indices, indicesEnds = _getIndices(numBytesUsable, numLocations, maxDataLen, splitData)
+                try:
+                    assert np.max(indices) < numBytesUsable
+                except:
+                    indices, indicesEnds = _getIndices(numBytesUsable, numLocations, maxDataLen, splitData)
+                    try:
+                        assert np.max(indices) < numBytesUsable
+                    except:
+                        print('Could not find enough space to encode data')
+                        exit()
+
     
-    indicesEnds = indices.copy()
-    idxs2       = np.array([], dtype=int)
-    for i,idx in enumerate(indices):
-        idxs2 = np.append(idxs2, np.arange(idx, idx+len(splitData[i])))
-    idxs2   = np.array(idxs2, dtype=int)
-    indices = idxs2
 
     maxNum  = len(format(numBytesPic, 'b'))
     allIndicesEnds = ''
@@ -63,7 +83,6 @@ def encode(imagePath, dataToEncrypt, outputImagePath):
         num = num.zfill(maxNum)
         allIndicesEnds += num
 
-    imgDatFlat = imageData.flatten()
     for i,indx in enumerate(indices):
         rgb = imgDatFlat[indx]
         rgb = format(rgb, '08b')
@@ -88,16 +107,24 @@ def encode(imagePath, dataToEncrypt, outputImagePath):
     return
 
 
-def decode(imagePath):
-    imageData   = cv2.imread(imagePath)
-    numBytesPic = int(np.floor(imageData.shape[0] * imageData.shape[1] * 3))
-    numLocations = 10
-    maxNum = len(format(numBytesPic, 'b'))
-    reverseData = imageData.flatten()[::-1]
-    locations = getLocations(reverseData, numLocations, maxNum)
-
-    flattened = imageData.flatten()
+def decode(imagePath:str) -> str:
+    """Decodes data from an image
     
+    Args:
+        imagePath (str): Path to image
+        
+        Returns:
+            str: Decrypted data"""
+    
+    imageData    = cv2.imread(imagePath)
+    imgArea      = imageData.shape[0] * imageData.shape[1]
+    numBytesPic  = int(np.floor(imgArea * 3))
+    numLocations = int(np.ceil(np.log2(imgArea)))
+    maxNum       = len(format(numBytesPic, 'b'))
+    reverseData  = imageData.flatten()[::-1]
+    locations    = _getLocations(reverseData, numLocations, maxNum)
+
+    flattened    = imageData.flatten()
 
     binaryData  = ''
     unencrypted = ''
@@ -117,7 +144,7 @@ def decode(imagePath):
     return unencrypted
 
 
-def getLocations(reverseData, numLocations, maxNum):
+def _getLocations(reverseData, numLocations, maxNum):
     locations     = []
     locationCount = 0
     temp          = ''
@@ -134,11 +161,35 @@ def getLocations(reverseData, numLocations, maxNum):
     return locations
 
 
-def split(a, n):
+def _split(a, n):
     k, m = divmod(len(a), n)
     splitted = (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
     return splitted
 
+
+def _getIndices(numBytesUsable, numLocations, maxDataLen, splitData):
+    indices = np.random.randint(0, numBytesUsable, numLocations) #[location1, location2];
+    indices = np.sort(indices)
+    for c in range(numLocations):
+        for i,idx in enumerate(indices):
+            if i == len(indices)-1:
+                break
+            if indices[i+1] - idx < maxDataLen:
+                indices[i] = idx - maxDataLen
+                if indices[i] < 0:
+                    indices[i] = 0
+                    indices[i+1] = maxDataLen
+            if idx + maxDataLen > numBytesUsable:
+                indices[i]   = numBytesUsable - maxDataLen
+                indices[i+1] = numBytesUsable
+    
+    indicesEnds = indices.copy()
+    idxs2       = np.array([], dtype=int)
+    for i,idx in enumerate(indices):
+        idxs2 = np.append(idxs2, np.arange(idx, idx+len(splitData[i])))
+    idxs2   = np.array(idxs2, dtype=int)
+    indices = idxs2
+    return indices, indicesEnds
 
 
 
@@ -150,6 +201,7 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--text",   help="Text to encode into the given image")
     # parse the args
     args = parser.parse_args()
+    hasRun = False
     if args.encode:
         secret_data = args.text
         input_image = args.encode
@@ -160,9 +212,20 @@ if __name__ == '__main__':
         # encode the data into the image
         encode(imagePath=input_image, dataToEncrypt=secret_data, outputImagePath=output_image)
         print("[+] Saved encoded image.")
+        hasRun = True
     if args.decode:
         input_image = args.decode
         # decode the secret data from the image and print it in the console
         decoded_data = decode(input_image)
         print("[+] Decoded data:", decoded_data)
-
+        hasRun = True
+    if not hasRun:
+        print()
+        print("[-] No arguments provided. Use -h or --help for help.")
+        print()
+        print("[-] Example: python stenography.py -e tests/stockimage.png -t 'testing'")
+        print()
+        print("[-] Example: python stenography.py -d tests/stockimage_encoded.png")
+        print()
+        print("[-] Example: python stenography.py -e tests/stockimage.png -t 'testing' -d tests/stockimage_encoded.png")
+        print()
