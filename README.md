@@ -31,8 +31,11 @@ if any of the other methods have gone down for some reason then you can always c
 ###  syntax 
 
 (-e )encrypts the message to an image
+
 (-d )decrypts a message from image
+
 ( -t )denotes the start of the string being encrypted
+
 < image path > is the local path to the image you are trying to encrypt or decrypt
 
 to encrypt
