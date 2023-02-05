@@ -1,17 +1,21 @@
 import cv2
 import numpy as np
 import os
+import re
 
 
-def encode(imagePath, dataToEncrypt, output_image):
-    # findSlash = [m.start() for m in re.finditer('/', imagePath)]
+def encode(imagePath, dataToEncrypt, outputImagePath):
+    findSlash = [m.start() for m in re.finditer('/', outputImagePath)]
 
-    # imgName       = imagePath[findSlash[-1]+1:]
-    # pathBeforeImg = imagePath[:findSlash[-1]+1]
+    imgName       = outputImagePath[findSlash[-1]+1:]
+    pathBeforeImg = outputImagePath[:findSlash[-1]+1]
 
     # check if image exists
     if not os.path.isfile(imagePath):
         print('Image not found')
+        exit()
+    if not os.path.isdir(pathBeforeImg):
+        print('Output directory not found')
         exit()
 
     imageData    = cv2.imread(imagePath)
@@ -78,8 +82,8 @@ def encode(imagePath, dataToEncrypt, output_image):
     imgDatFlat = imgDatFlat[::-1]
     imageData  = imgDatFlat.reshape(imageData.shape)
           
-    cv2.imwrite(output_image, imageData)
-    print('Image encrypted successfully, saved as to ', output_image)
+    cv2.imwrite(outputImagePath, imageData)
+    print('Image encrypted successfully, saved as to ', outputImagePath)
     return
 
 
@@ -153,7 +157,7 @@ if __name__ == '__main__':
         output_image = os.path.join(path, f"{filename}_encoded.{ext}")
         print(f"[+] Encoding {secret_data} into {input_image} and saving it as {output_image} ...")
         # encode the data into the image
-        encode(imagePath=input_image, dataToEncrypt=secret_data, output_image=output_image)
+        encode(imagePath=input_image, dataToEncrypt=secret_data, outputImagePath=output_image)
         print("[+] Saved encoded image.")
     if args.decode:
         input_image = args.decode
