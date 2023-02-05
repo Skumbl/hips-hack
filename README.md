@@ -14,8 +14,6 @@ check out the web app here
 
 HIPS is both a web application as well as a pip install terminal package
 
-### install
-
 #### install using pip
 
     pip install hips-hack==0.1 
