@@ -1,7 +1,7 @@
 import unittest
 from hips_hack.stenography import encode, decode
 
-class TestMultiplyByThree(unittest.TestCase):
+class TestEncodingDecoding(unittest.TestCase):
 
     def test_multiply_by_three(self):
         encode('stockimage.png','test','stockimage_encoded.png')
