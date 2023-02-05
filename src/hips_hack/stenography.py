@@ -6,16 +6,17 @@ import re
 
 def encode(imagePath, dataToEncrypt, outputImagePath):
     findSlash = [m.start() for m in re.finditer('/', outputImagePath)]
-
-    imgName       = outputImagePath[findSlash[-1]+1:]
-    pathBeforeImg = outputImagePath[:findSlash[-1]+1]
+    
+    if len(findSlash) != 0:
+        imgName       = outputImagePath[findSlash[-1]+1:]
+        pathBeforeImg = outputImagePath[:findSlash[-1]+1]
+        if not os.path.isdir(pathBeforeImg):
+            print('Output directory not found')
+            exit()
 
     # check if image exists
     if not os.path.isfile(imagePath):
         print('Image not found')
-        exit()
-    if not os.path.isdir(pathBeforeImg):
-        print('Output directory not found')
         exit()
 
     imageData    = cv2.imread(imagePath)

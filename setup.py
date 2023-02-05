@@ -29,7 +29,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hips_hack',
-    version='0.1',
+    version='0.2',
     license='MIT',
     author = 'Jan Arvik, Truman DeWalch, Michael Peters',
     author_email='truman99@vt.edu',
