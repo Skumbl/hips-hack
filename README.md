@@ -14,7 +14,7 @@ HIPS is both a web application as well as a pip install terminal package
 
 #### install using pip
 
-    pip install hips-hack==0.1 
+    pip3 install hips-hack
 
 this will download the hips utility to your local machine
 see **how to use** for the syntax and parameters for the terminal utility
