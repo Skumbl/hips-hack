@@ -53,7 +53,11 @@ the new image with the encryption will be placed
 
 
 # Development Team
+
 Jan Arvik - Team Lead / Website Lead
+
 Truman DeWelch- Command line/ PIP developer
+
 Michael Peters - Flask / AWS developer 
+
 Jack Savage - CSS / Typescript Developer
