@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hips_hack',
-    version='0.8',
+    version='0.10',
     license='MIT',
     author = 'Jan Arvik, Truman DeWalch, Michael Peters',
     author_email='truman99@vt.edu',
@@ -13,4 +13,5 @@ setup(
     keywords     = ['Encryption', 'Privacy'],
     install_requires = ['opencv-python', 'numpy'],
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
 )
