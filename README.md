@@ -6,7 +6,7 @@ It is also a web application linked bellow
 # Web App (using Flask)
 check out the web app here
 > nojjktotvrgotyomnz.tech
-##### the website name is above, try cracking the cypher to see what it means (not including .tech)
+##### website is currently down for maintenance
 
 # Install
 
